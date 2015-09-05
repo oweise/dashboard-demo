@@ -125,11 +125,11 @@ public class DummyDataProvider implements DataProvider {
                         fileWriter.close();
                     } catch (Exception e) {
                         json = readJsonFromFile(new File(baseDirectory
-                                + "/movies-fallback.txt"));
+                                + "/movies-fallback.json"));
                     }
                 } else {
                     json = readJsonFromFile(new File(baseDirectory
-                            + "/movies-fallback.txt"));
+                            + "/movies-fallback.json"));
                 }
             }
         } catch (Exception e) {
@@ -148,7 +148,11 @@ public class DummyDataProvider implements DataProvider {
                         .contains("poster_default")) {
                     Movie movie = new Movie();
                     movie.setId(i);
-                    movie.setTitle(movieJson.get("title").getAsString());
+                    
+                    String pupil = movieJson.get("abridged_cast").getAsJsonArray().get(0).getAsJsonObject().get("name").getAsString();
+                    String teacher = movieJson.get("abridged_cast").getAsJsonArray().get(1).getAsJsonObject().get("name").getAsString();
+                    String instrument = DummyDataGenerator.randomInstrument();
+                    movie.setTitle(buildMovieTitle(instrument, teacher, pupil));
                     try {
                         movie.setDuration(movieJson.get("runtime").getAsInt());
                     } catch (Exception e) {
@@ -187,7 +191,22 @@ public class DummyDataProvider implements DataProvider {
         return result;
     }
 
-    /* JSON utility method */
+    private static String buildMovieTitle(String instrument, String teacher, String pupil) {
+
+    	StringBuilder out = new StringBuilder();
+    	out.append("<div class=\"lesson\">");
+    	
+    	out.append("<b>" + instrument + "</b><br>");
+    	out.append("L: " + teacher + "<br>");
+    	out.append("S: " + pupil + "<br>");
+    	
+    	out.append("</div>");
+    	return out.toString();
+    	
+    	
+	}
+
+	/* JSON utility method */
     private static String readAll(Reader rd) throws IOException {
         StringBuilder sb = new StringBuilder();
         int cp;
@@ -331,6 +350,16 @@ public class DummyDataProvider implements DataProvider {
                     String country = array[i].toString();
                     transaction.setCountry(country);
 
+                    // Flatten minute
+                    int minute = cal.get(Calendar.MINUTE);
+                    if (minute >= 30) {
+                    	minute = 30;
+                    }
+                    else {
+                    	minute = 0;
+                    }
+                    cal.set(Calendar.MINUTE, minute);
+                    
                     transaction.setTime(cal.getTime());
 
                     // City
@@ -386,8 +415,8 @@ public class DummyDataProvider implements DataProvider {
     @Override
     public User authenticate(String userName, String password) {
         User user = new User();
-        user.setFirstName(DummyDataGenerator.randomFirstName());
-        user.setLastName(DummyDataGenerator.randomLastName());
+        user.setFirstName("Lars");
+        user.setLastName("Dannenberg");
         user.setRole("admin");
         String email = user.getFirstName().toLowerCase() + "."
                 + user.getLastName().toLowerCase() + "@"

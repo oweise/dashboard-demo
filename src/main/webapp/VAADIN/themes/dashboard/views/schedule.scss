@@ -2,11 +2,15 @@
 
   .schedule {
     // background: $v-panel-background-color;
+    
+    
 
     .v-calendar-event-content {
-      background-repeat: repeat-x, no-repeat;
-      background-size: auto, cover;
-      border: 1px solid #000;
+      background-repeat: no-repeat;
+      background-size: 50px 100px;
+      background-color: white !important;
+      background-position: right top;
+      border: 1px solid gainsboro;
       -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
       -moz-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
       box-shadow: 0 1px 1px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
@@ -16,11 +20,12 @@
       right: 0;
       width: auto;
       font-size: 12px;
-      font-weight: 600;
-      color: #fff;
-      text-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
+      /*font-weight: 600;*/
+      color: black;
+      /*text-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);*/
 
       span {
+      	display: none;
         color: #979699;
       }
     }

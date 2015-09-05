@@ -1,5 +1,7 @@
 package com.vaadin.demo.dashboard.view.schedule;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -12,6 +14,7 @@ import com.vaadin.demo.dashboard.domain.Movie;
 import com.vaadin.demo.dashboard.domain.Transaction;
 import com.vaadin.demo.dashboard.event.DashboardEvent.BrowserResizeEvent;
 import com.vaadin.demo.dashboard.event.DashboardEventBus;
+import com.vaadin.demo.ma.HijackedCalendar;
 import com.vaadin.event.LayoutEvents.LayoutClickEvent;
 import com.vaadin.event.LayoutEvents.LayoutClickListener;
 import com.vaadin.navigator.View;
@@ -24,6 +27,7 @@ import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
+import com.vaadin.ui.Calendar.TimeFormat;
 import com.vaadin.ui.Calendar;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
@@ -47,8 +51,11 @@ import com.vaadin.ui.themes.ValoTheme;
 @SuppressWarnings("serial")
 public final class ScheduleView extends CssLayout implements View {
 
+	public static final DateFormat TIMEFORMAT = new SimpleDateFormat("hh:MM");
+	
     private Calendar calendar;
     private final Component tray;
+    
 
     public ScheduleView() {
         setSizeFull();
@@ -84,8 +91,7 @@ public final class ScheduleView extends CssLayout implements View {
         for (Movie m : DashboardUI.getDataProvider().getMovies()) {
             WebBrowser webBrowser = Page.getCurrent().getWebBrowser();
 
-            String bg = "url(VAADIN/themes/" + UI.getCurrent().getTheme()
-                    + "/img/event-title-bg.png), url(" + m.getThumbUrl() + ")";
+            String bg = "url(" + m.getThumbUrl() + ")";
 
             // IE8 doesn't support multiple background images
             if (webBrowser.isIE() && webBrowser.getBrowserMajorVersion() == 8) {
@@ -102,13 +108,16 @@ public final class ScheduleView extends CssLayout implements View {
 
     private Component buildCalendarView() {
         VerticalLayout calendarLayout = new VerticalLayout();
-        calendarLayout.setCaption("Calendar");
+        calendarLayout.setCaption("Tagesplan");
         calendarLayout.setMargin(true);
+        calendarLayout.setSpacing(true);
 
-        calendar = new Calendar(new MovieEventProvider());
+        calendar = new HijackedCalendar(new MovieEventProvider());
         calendar.setWidth(100.0f, Unit.PERCENTAGE);
-        calendar.setHeight(1000.0f, Unit.PIXELS);
-
+        calendar.setHeight(1500.0f, Unit.PIXELS);
+        calendar.setCaptionAsHtml(true);
+        calendar.setEventCaptionAsHtml(true);
+        
         calendar.setHandler(new EventClickHandler() {
             @Override
             public void eventClick(final EventClick event) {
@@ -120,8 +129,9 @@ public final class ScheduleView extends CssLayout implements View {
         });
         calendarLayout.addComponent(calendar);
 
-        calendar.setFirstVisibleHourOfDay(11);
-        calendar.setLastVisibleHourOfDay(23);
+        calendar.setFirstVisibleHourOfDay(8);
+        calendar.setLastVisibleHourOfDay(18);
+        calendar.setTimeFormat(TimeFormat.Format24H);
 
         calendar.setHandler(new BasicEventMoveHandler() {
             @Override
@@ -168,7 +178,7 @@ public final class ScheduleView extends CssLayout implements View {
 
     private Component buildCatalogView() {
         CssLayout catalog = new CssLayout();
-        catalog.setCaption("Catalog");
+        catalog.setCaption("Wochenplan");
         catalog.addStyleName("catalog");
 
         for (final Movie movie : DashboardUI.getDataProvider().getMovies()) {
@@ -275,7 +285,7 @@ public final class ScheduleView extends CssLayout implements View {
                 Movie movie = DashboardUI.getDataProvider().getMovie(
                         transaction.getMovieId());
                 Date end = new Date(transaction.getTime().getTime()
-                        + movie.getDuration() * 60 * 1000);
+                        + (int) (Math.floor(Math.random() * 2) +1) * 30 * 60 * 1000);
                 result.add(new MovieEvent(transaction.getTime(), end, movie));
             }
             return result;
@@ -337,7 +347,13 @@ public final class ScheduleView extends CssLayout implements View {
 
         @Override
         public String getCaption() {
-            return movie.getTitle();
+        	StringBuffer buf = new StringBuffer();
+        	buf.append(TIMEFORMAT.format(getStart()))
+        	.append("-").append(TIMEFORMAT.format(getEnd()))
+        	.append(movie.getTitle());
+        	
+            return buf.toString();
+            		
         }
 
     }

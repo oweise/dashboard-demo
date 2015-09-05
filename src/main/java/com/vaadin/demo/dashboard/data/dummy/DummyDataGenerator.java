@@ -8,8 +8,8 @@ import com.vaadin.addon.charts.model.style.SolidColor;
 import com.vaadin.demo.dashboard.domain.DashboardNotification;
 
 public abstract class DummyDataGenerator {
-
-    static String randomFirstName() {
+    
+	static String randomFirstName() {
         String[] names = { "Dave", "Mike", "Katherine", "Jonas", "Linus",
                 "Bob", "Anne", "Minna", "Elisa", "George", "Mathias", "Pekka",
                 "Fredrik", "Kate", "Teppo", "Kim", "Samatha", "Sam", "Linda",
@@ -26,6 +26,11 @@ public abstract class DummyDataGenerator {
                 "Robinson", "Garcia", "Thomas", "Hall", "Lopez", "Scott",
                 "Adams", "Barker", "Morris", "Cook", "Rogers", "Rivera",
                 "Gray", "Price", "Perry", "Powell", "Russell", "Diaz" };
+        return names[(int) (Math.random() * names.length)];
+    }
+    
+    static String randomInstrument() {
+        String[] names = { "Geige", "Gitarre", "E-Gitarre", "Schlagzeug", "Fagott", "Klarinette", "Gesang", "E-Bass", "Kontrabass", "Cello" };
         return names[(int) (Math.random() * names.length)];
     }
 

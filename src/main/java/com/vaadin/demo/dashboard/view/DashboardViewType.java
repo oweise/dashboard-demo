@@ -10,11 +10,12 @@ import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Resource;
 
 public enum DashboardViewType {
-    DASHBOARD("dashboard", DashboardView.class, FontAwesome.HOME, true), SALES(
-            "sales", SalesView.class, FontAwesome.BAR_CHART_O, false), TRANSACTIONS(
-            "transactions", TransactionsView.class, FontAwesome.TABLE, false), REPORTS(
-            "reports", ReportsView.class, FontAwesome.FILE_TEXT_O, true), SCHEDULE(
-            "schedule", ScheduleView.class, FontAwesome.CALENDAR_O, false);
+    DASHBOARD("Übersicht", DashboardView.class, FontAwesome.HOME, true),
+    SCHEDULE("Kalender", ScheduleView.class, FontAwesome.CALENDAR_O, false),
+    SALES("Schüler", SalesView.class, FontAwesome.BAR_CHART_O, false), 
+    TRANSACTIONS("Räume", TransactionsView.class, FontAwesome.TABLE, false), 
+    REPORTS("Auswertung", ReportsView.class, FontAwesome.FILE_TEXT_O, true);
+    
 
     private final String viewName;
     private final Class<? extends View> viewClass;
