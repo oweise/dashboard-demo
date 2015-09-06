@@ -159,8 +159,7 @@ public class DummyDataProvider implements DataProvider {
                         // No need to handle this exception
                     }
                     movie.setSynopsis(movieJson.get("synopsis").getAsString());
-                    movie.setThumbUrl(posters.get("profile").getAsString()
-                            .replace("_tmb", "_320"));
+                    movie.setThumbUrl("VAADIN/themes/dashboard/portraits/" + i + ".jpg");
                     movie.setPosterUrl(posters.get("detailed").getAsString()
                             .replace("_tmb", "_640"));
 
@@ -194,13 +193,15 @@ public class DummyDataProvider implements DataProvider {
     private static String buildMovieTitle(String instrument, String teacher, String pupil) {
 
     	StringBuilder out = new StringBuilder();
-    	out.append("<div class=\"lesson\">");
+    	out.append("<table class=\"lesson\">");
     	
-    	out.append("<b>" + instrument + "</b><br>");
-    	out.append("L: " + teacher + "<br>");
-    	out.append("S: " + pupil + "<br>");
+    	out.append("<tr><td><b>").append(instrument).append("</b></td></tr>");
+    	out.append("<tr><td>").append(teacher).append("</td></tr>");
+    	out.append("<tr><td>").append(pupil).append("</td></tr>");
     	
-    	out.append("</div>");
+    	out.append("</table>");
+    	
+    	
     	return out.toString();
     	
     	
@@ -338,7 +339,7 @@ public class DummyDataProvider implements DataProvider {
             while (cal.before(lastDayOfWeek)) {
 
                 int hourOfDay = cal.get(Calendar.HOUR_OF_DAY);
-                if (hourOfDay > 10 && hourOfDay < 22) {
+                if (hourOfDay > 8 && hourOfDay < 13) {
 
                     Transaction transaction = new Transaction();
                     transaction.setMovieId(movie.getId());
@@ -395,7 +396,7 @@ public class DummyDataProvider implements DataProvider {
                     result.get(movie.getId()).add(transaction);
                 }
 
-                cal.add(Calendar.SECOND, rand.nextInt(500000) + 5000);
+                cal.add(Calendar.SECOND, rand.nextInt(100000) + 5000);
             }
         }
 

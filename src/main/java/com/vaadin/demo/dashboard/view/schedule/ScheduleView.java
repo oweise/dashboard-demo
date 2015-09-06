@@ -1,5 +1,6 @@
 package com.vaadin.demo.dashboard.view.schedule;
 
+import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -20,7 +21,11 @@ import com.vaadin.event.LayoutEvents.LayoutClickListener;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.server.ExternalResource;
+import com.vaadin.server.FileResource;
 import com.vaadin.server.Page;
+import com.vaadin.server.ResourceReference;
+import com.vaadin.server.VaadinRequest;
+import com.vaadin.server.VaadinService;
 import com.vaadin.server.WebBrowser;
 import com.vaadin.shared.MouseEventDetails.MouseButton;
 import com.vaadin.ui.Alignment;
@@ -88,11 +93,12 @@ public final class ScheduleView extends CssLayout implements View {
     private void injectMovieCoverStyles() {
         // Add all movie cover images as classes to CSSInject
         String styles = "";
+        
         for (Movie m : DashboardUI.getDataProvider().getMovies()) {
             WebBrowser webBrowser = Page.getCurrent().getWebBrowser();
-
+            
             String bg = "url(" + m.getThumbUrl() + ")";
-
+            
             // IE8 doesn't support multiple background images
             if (webBrowser.isIE() && webBrowser.getBrowserMajorVersion() == 8) {
                 bg = "url(" + m.getThumbUrl() + ")";
@@ -114,7 +120,7 @@ public final class ScheduleView extends CssLayout implements View {
 
         calendar = new HijackedCalendar(new MovieEventProvider());
         calendar.setWidth(100.0f, Unit.PERCENTAGE);
-        calendar.setHeight(1500.0f, Unit.PIXELS);
+        calendar.setHeight(1800.0f, Unit.PIXELS);
         calendar.setCaptionAsHtml(true);
         calendar.setEventCaptionAsHtml(true);
         
@@ -348,8 +354,10 @@ public final class ScheduleView extends CssLayout implements View {
         @Override
         public String getCaption() {
         	StringBuffer buf = new StringBuffer();
-        	buf.append(TIMEFORMAT.format(getStart()))
+        	buf.append("<div class=\"eventtime\">")
+        	.append(TIMEFORMAT.format(getStart()))
         	.append("-").append(TIMEFORMAT.format(getEnd()))
+        	.append("</div>")
         	.append(movie.getTitle());
         	
             return buf.toString();
