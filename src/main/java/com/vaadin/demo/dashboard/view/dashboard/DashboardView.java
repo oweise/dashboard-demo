@@ -5,11 +5,7 @@ import java.util.Iterator;
 
 import com.google.common.eventbus.Subscribe;
 import com.vaadin.demo.dashboard.DashboardUI;
-import com.vaadin.demo.dashboard.component.SparklineChart;
-import com.vaadin.demo.dashboard.component.TopGrossingMoviesChart;
-import com.vaadin.demo.dashboard.component.TopSixTheatersChart;
 import com.vaadin.demo.dashboard.component.TopTenMoviesTable;
-import com.vaadin.demo.dashboard.data.dummy.DummyDataGenerator;
 import com.vaadin.demo.dashboard.domain.DashboardNotification;
 import com.vaadin.demo.dashboard.event.DashboardEvent.CloseOpenWindowsEvent;
 import com.vaadin.demo.dashboard.event.DashboardEvent.NotificationsCountUpdatedEvent;
@@ -88,23 +84,6 @@ public final class DashboardView extends Panel implements View,
         sparks.addStyleName("sparks");
         sparks.setWidth("100%");
         Responsive.makeResponsive(sparks);
-
-        SparklineChart s = new SparklineChart("Traffic", "K", "",
-                DummyDataGenerator.chartColors[0], 22, 20, 80);
-        sparks.addComponent(s);
-
-        s = new SparklineChart("Revenue / Day", "M", "$",
-                DummyDataGenerator.chartColors[2], 8, 89, 150);
-        sparks.addComponent(s);
-
-        s = new SparklineChart("Checkout Time", "s", "",
-                DummyDataGenerator.chartColors[3], 10, 30, 120);
-        sparks.addComponent(s);
-
-        s = new SparklineChart("Theater Fill Rate", "%", "",
-                DummyDataGenerator.chartColors[5], 50, 34, 100);
-        sparks.addComponent(s);
-
         return sparks;
     }
 
@@ -164,18 +143,10 @@ public final class DashboardView extends Panel implements View,
         dashboardPanels.addStyleName("dashboard-panels");
         Responsive.makeResponsive(dashboardPanels);
 
-        dashboardPanels.addComponent(buildTopGrossingMovies());
         dashboardPanels.addComponent(buildNotes());
         dashboardPanels.addComponent(buildTop10TitlesByRevenue());
-        dashboardPanels.addComponent(buildPopularMovies());
 
         return dashboardPanels;
-    }
-
-    private Component buildTopGrossingMovies() {
-        TopGrossingMoviesChart topGrossingMoviesChart = new TopGrossingMoviesChart();
-        topGrossingMoviesChart.setSizeFull();
-        return createContentWrapper(topGrossingMoviesChart);
     }
 
     private Component buildNotes() {
@@ -194,9 +165,6 @@ public final class DashboardView extends Panel implements View,
         return contentWrapper;
     }
 
-    private Component buildPopularMovies() {
-        return createContentWrapper(new TopSixTheatersChart());
-    }
 
     private Component createContentWrapper(final Component content) {
         final CssLayout slot = new CssLayout();
