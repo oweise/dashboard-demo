@@ -1,9 +1,12 @@
 package com.vaadin.demo.dashboard.domain;
 
 import java.util.Date;
+import java.util.UUID;
 
 public final class Transaction {
-    private Date time;
+	private String id;
+    private Date start;
+    private Date end;
     private String country;
     private String city;
     private String theater;
@@ -12,6 +15,10 @@ public final class Transaction {
     private double price;
     private long movieId;
     private String title;
+    
+    public Transaction() {
+    	this.id = UUID.randomUUID().toString();
+    }
 
     public long getMovieId() {
         return movieId;
@@ -30,11 +37,11 @@ public final class Transaction {
     }
 
     public Date getTime() {
-        return time;
+        return start;
     }
 
     public void setTime(final Date time) {
-        this.time = time;
+        this.start = time;
     }
 
     public String getCountry() {
@@ -84,5 +91,17 @@ public final class Transaction {
     public void setPrice(final double price) {
         this.price = price;
     }
+
+	public Date getEnd() {
+		return end;
+	}
+
+	public void setEnd(Date end) {
+		this.end = end;
+	}
+
+	public String getId() {
+		return id;
+	}
 
 }

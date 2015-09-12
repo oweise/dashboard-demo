@@ -2,12 +2,16 @@ package com.vaadin.demo.dashboard.data.dummy;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.Reader;
+import java.io.Writer;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.text.DateFormat;
@@ -34,6 +38,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.thoughtworks.xstream.XStream;
 import com.vaadin.demo.dashboard.data.DataProvider;
 import com.vaadin.demo.dashboard.domain.DashboardNotification;
 import com.vaadin.demo.dashboard.domain.Movie;
@@ -322,6 +327,13 @@ public class DummyDataProvider implements DataProvider {
      * @return
      */
     private Multimap<Long, Transaction> generateTransactionsData() {
+    	
+    	File transactionsFile = new File("transactions.xml");
+    	if (transactionsFile.exists()) {
+    		XStream x = new XStream();
+    		return (Multimap<Long, Transaction>) x.fromXML(transactionsFile);
+    	}
+    	
         Multimap<Long, Transaction> result = MultimapBuilder.hashKeys()
                 .arrayListValues().build();
 
@@ -362,6 +374,11 @@ public class DummyDataProvider implements DataProvider {
                     cal.set(Calendar.MINUTE, minute);
                     
                     transaction.setTime(cal.getTime());
+                    
+                    Date end = new Date(transaction.getTime().getTime()
+                            + (long) ((Math.floor(Math.random() * 3) +1 )* 1000 * 60 * 30));
+                    
+                    transaction.setEnd(end);
 
                     // City
                     Collection<String> cities = countryToCities.get(country);
@@ -558,6 +575,30 @@ public class DummyDataProvider implements DataProvider {
                                 && !input.getTime().after(endDate);
                     }
                 });
+    }
+    
+    @Override
+    public Transaction getTransaction(String id) {
+    	
+    	
+    	for (Map.Entry<Long,Collection<Transaction>> transactionsPerMovie :transactions.asMap().entrySet()) {
+    		for (Transaction t : transactionsPerMovie.getValue()) {
+    			if (id.equals(t.getId())) {
+    				return t;
+    			}
+    		}
+    	}
+    	
+    	return null;
+    }
+    
+    @Override
+    public void save() throws IOException {
+    	XStream x = new XStream();
+    	OutputStream out = new FileOutputStream("transactions.xml");
+    	x.toXML(transactions, out);
+    	out.flush();
+    	out.close();
     }
 
 }

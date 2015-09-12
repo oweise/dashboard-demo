@@ -1,5 +1,6 @@
 package com.vaadin.demo.dashboard.data;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Date;
 
@@ -73,4 +74,8 @@ public interface DataProvider {
      *         dates.
      */
     Collection<Transaction> getTransactionsBetween(Date startDate, Date endDate);
+    
+    Transaction getTransaction(String id);
+
+	void save() throws IOException;
 }

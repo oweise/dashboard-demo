@@ -1,6 +1,7 @@
 package com.vaadin.demo.dashboard.view.schedule;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -28,6 +29,7 @@ import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinService;
 import com.vaadin.server.WebBrowser;
 import com.vaadin.shared.MouseEventDetails.MouseButton;
+import com.vaadin.shared.ui.ui.NotificationRole;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
@@ -49,6 +51,7 @@ import com.vaadin.ui.components.calendar.CalendarComponentEvents.EventResize;
 import com.vaadin.ui.components.calendar.CalendarComponentEvents.MoveEvent;
 import com.vaadin.ui.components.calendar.event.CalendarEvent;
 import com.vaadin.ui.components.calendar.event.CalendarEventProvider;
+import com.vaadin.ui.components.calendar.event.EditableCalendarEvent;
 import com.vaadin.ui.components.calendar.handler.BasicEventMoveHandler;
 import com.vaadin.ui.components.calendar.handler.BasicEventResizeHandler;
 import com.vaadin.ui.themes.ValoTheme;
@@ -56,7 +59,7 @@ import com.vaadin.ui.themes.ValoTheme;
 @SuppressWarnings("serial")
 public final class ScheduleView extends CssLayout implements View {
 
-	public static final DateFormat TIMEFORMAT = new SimpleDateFormat("hh:MM");
+	public static final DateFormat TIMEFORMAT = new SimpleDateFormat("hh:mm");
 	
     private Calendar calendar;
     private final Component tray;
@@ -151,8 +154,12 @@ public final class ScheduleView extends CssLayout implements View {
                     // Update event dates
                     long length = editableEvent.getEnd().getTime()
                             - editableEvent.getStart().getTime();
+                    
                     setDates(editableEvent, newFromTime,
                             new Date(newFromTime.getTime() + length));
+                    saveEvent(editableEvent);
+                    calendar.markAsDirty();
+                    
                     setTrayVisible(true);
                 }
             }
@@ -166,8 +173,18 @@ public final class ScheduleView extends CssLayout implements View {
         calendar.setHandler(new BasicEventResizeHandler() {
             @Override
             public void eventResize(final EventResize event) {
-                Notification
-                        .show("You're not allowed to change the movie duration");
+            	CalendarEvent calendarEvent = event.getCalendarEvent();
+                if (calendarEvent instanceof MovieEvent) {
+                    MovieEvent editableEvent = (MovieEvent) calendarEvent;
+                    
+                    
+                    editableEvent.setStart(event.getNewStart());
+                    editableEvent.setEnd(event.getNewEnd());
+                    saveEvent(editableEvent);
+                    calendar.markAsDirty();
+                    
+                    setTrayVisible(true);
+                }
             }
         });
 
@@ -182,7 +199,23 @@ public final class ScheduleView extends CssLayout implements View {
         return calendarLayout;
     }
 
-    private Component buildCatalogView() {
+    protected void saveEvent(MovieEvent editableEvent) {
+    	try {
+			Transaction t = DashboardUI.getDataProvider().getTransaction(editableEvent.getId());
+			if (t != null) {
+				t.setTime(editableEvent.getStart());
+				t.setEnd(editableEvent.getEnd());
+			}
+			DashboardUI.getDataProvider().save();
+		}
+    	catch (IOException e) {
+			e.printStackTrace();
+			Notification.show("Error", e.getMessage(), Notification.Type.ERROR_MESSAGE);
+		}
+		
+	}
+
+	private Component buildCatalogView() {
         CssLayout catalog = new CssLayout();
         catalog.setCaption("Wochenplan");
         catalog.addStyleName("catalog");
@@ -277,8 +310,8 @@ public final class ScheduleView extends CssLayout implements View {
     }
 
     private class MovieEventProvider implements CalendarEventProvider {
-
-        @Override
+    	
+         @Override
         public List<CalendarEvent> getEvents(final Date startDate,
                 final Date endDate) {
             // Transactions are dynamically fetched from the backend service
@@ -290,21 +323,21 @@ public final class ScheduleView extends CssLayout implements View {
             for (Transaction transaction : transactions) {
                 Movie movie = DashboardUI.getDataProvider().getMovie(
                         transaction.getMovieId());
-                Date end = new Date(transaction.getTime().getTime()
-                        + (int) (Math.floor(Math.random() * 2) +1) * 30 * 60 * 1000);
-                result.add(new MovieEvent(transaction.getTime(), end, movie));
+                result.add(new MovieEvent(transaction.getId(), transaction.getTime(), transaction.getEnd(), movie));
             }
             return result;
         }
     }
 
-    public final class MovieEvent implements CalendarEvent {
+    public final class MovieEvent implements EditableCalendarEvent {
 
         private Date start;
         private Date end;
         private Movie movie;
+        private String id;
 
-        public MovieEvent(final Date start, final Date end, final Movie movie) {
+        public MovieEvent(final String id, final Date start, final Date end, final Movie movie) {
+        	this.id = id;
             this.start = start;
             this.end = end;
             this.movie = movie;
@@ -363,6 +396,26 @@ public final class ScheduleView extends CssLayout implements View {
             return buf.toString();
             		
         }
+
+		public String getId() {
+			return id;
+		}
+
+		@Override
+		public void setCaption(String caption) {
+		}
+
+		@Override
+		public void setDescription(String description) {
+		}
+
+		@Override
+		public void setStyleName(String styleName) {
+		}
+
+		@Override
+		public void setAllDay(boolean isAllDay) {
+		}
 
     }
 
