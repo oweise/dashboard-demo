@@ -17,6 +17,7 @@ import com.vaadin.demo.dashboard.event.DashboardEventBus;
 import com.vaadin.event.dd.DragAndDropEvent;
 import com.vaadin.event.dd.DropHandler;
 import com.vaadin.event.dd.acceptcriteria.AcceptCriterion;
+import com.vaadin.server.ExternalResource;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.server.VaadinSession;
@@ -32,6 +33,7 @@ import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.DragAndDropWrapper;
 import com.vaadin.ui.DragAndDropWrapper.DragStartMode;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.MenuBar.Command;
@@ -80,7 +82,13 @@ public final class DashboardMenu extends CustomComponent {
         menuContent.addComponent(buildUserMenu());
         menuContent.addComponent(buildToggleButton());
         menuContent.addComponent(buildMenuItems());
-
+        
+        CssLayout maLogoDiv = new CssLayout();
+        maLogoDiv.addStyleName("ma-logo");
+        Image image = new Image(null, new ExternalResource("VAADIN/themes/dashboard/img/ma-logo-transparent.png"));
+        maLogoDiv.addComponent(image);
+        menuContent.addComponent(maLogoDiv);
+        
         return menuContent;
     }
 

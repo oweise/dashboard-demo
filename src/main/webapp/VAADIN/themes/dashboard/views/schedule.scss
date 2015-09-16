@@ -7,7 +7,8 @@
     .v-calendar-event-content {
       background-repeat: no-repeat;
       background-size: 50px 50px;
-      background-color: rgba(200, 234, 244, .2) !important;
+      /*background-color: rgba(200, 234, 244, .2) !important;*/
+      background-color: rgba(65, 75, 86, .1) !important;
       background-position: right top;
       border: 1px solid #7278B9;
       -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
@@ -35,7 +36,7 @@
       	position: absolute;
     	left: 0px;
     	top: 0px;
-    	background-color: #7278B9;
+    	background-color: rgb(65, 75, 86);
     	color: white;
     	border-bottom-right-radius:10px;
     	width: 125px;

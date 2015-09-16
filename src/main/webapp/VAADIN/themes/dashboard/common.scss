@@ -1,3 +1,6 @@
+$v-focus-color: black;
+$v-selection-color: black;
+
 @include keyframes(animate-in-scale-up) {
   0% {
     @include transform(scale(0));
@@ -8,6 +11,11 @@
 
   .valo-menu {
     border-right: none;
+    
+    .sidebar {
+    	position:relative;
+    	height:100%;
+    }
 
     .badgewrapper {
       position: relative;
@@ -16,6 +24,11 @@
 
     .v-ddwrapper {
       display: block;
+    }
+    
+    #dashboard-menu-notifications-badge {
+    	color: rgba(255, 255, 255, .8);
+    	font-size: 10pt;
     }
   }
 
@@ -89,6 +102,19 @@
     font-size: round($v-font-size * 0.9);
     pointer-events: none;
   }
+    
+	.ma-logo {
+		position:absolute;
+		bottom:0;
+    	width: 100%;
+    	margin-top:30px;
+  		img {
+  			bottom:0;
+    		display: block;
+    		margin-left: auto;
+    		margin-right: auto;
+		}
+	}
 
   .dashboard-view .notifications.unread .v-button-caption {
     display: block;
@@ -303,6 +329,7 @@
     .user-menu {
       margin-top: 20px;
     }
+    
     .valo-menuitems {
       top: 20px + $v-unit-size;
     }
